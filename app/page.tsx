@@ -124,7 +124,7 @@ export default function TarotPage() {
       </div>
 
       <div className="absolute bottom-6 text-[9px] opacity-20 tracking-[0.4em] uppercase pointer-events-none">
-        Mystical Guidance by Maria
+        Powered by Vinh Luong 🔮
       </div>
     </main>
   );
