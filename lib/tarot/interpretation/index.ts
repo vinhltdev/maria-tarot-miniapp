@@ -1,20 +1,20 @@
 import { normalizeTripleSpreadInput } from './normalize';
-import { synthesizeDeepInterpretation } from './synthesize';
-import { formatInterpretation } from './format';
+import { tongHopDienGiaiSau } from './synthesize';
+import { dinhDangDienGiai } from './format';
 
 export type {
-  DeepInterpretationInput,
-  DeepInterpretationResult,
-  FormattedInterpretation,
-  InterpretationDepth,
-  SpreadCardInput,
+  DauVaoDienGiaiSau,
+  KetQuaDienGiaiSau,
+  DienGiaiDaDinhDang,
+  MucDoDienGiai,
+  DauVaoLaBai,
 } from './types';
 
 export function interpretTripleSpread(
   drawnCards: Array<{ card: import('@/lib/tarot/types').TarotCard; isReversed: boolean }>,
 ) {
   const normalizedCards = normalizeTripleSpreadInput(drawnCards);
-  const result = synthesizeDeepInterpretation({
+  const result = tongHopDienGiaiSau({
     spread: 'triple',
     cards: normalizedCards,
     locale: 'vi',
@@ -22,6 +22,6 @@ export function interpretTripleSpread(
 
   return {
     result,
-    formatted: formatInterpretation(result, 'deep'),
+    formatted: dinhDangDienGiai(result, 'deep'),
   };
 }

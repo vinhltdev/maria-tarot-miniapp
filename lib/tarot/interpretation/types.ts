@@ -1,47 +1,47 @@
 import type { TarotCard } from '@/lib/tarot/types';
 
-export type SpreadPosition = 'past' | 'present' | 'future';
-export type Orientation = 'upright' | 'reversed';
-export type InterpretationDepth = 'short' | 'medium' | 'deep';
+export type ViTriTraiBai = 'past' | 'present' | 'future';
+export type ChieuLaBai = 'upright' | 'reversed';
+export type MucDoDienGiai = 'short' | 'medium' | 'deep';
 
-export interface SpreadCardInput {
-  position: SpreadPosition;
+export interface DauVaoLaBai {
+  position: ViTriTraiBai;
   card: TarotCard;
-  orientation: Orientation;
-  effectiveMeaning: string;
+  orientation: ChieuLaBai;
+  yNghiaHieuLuc: string;
 }
 
-export interface DeepInterpretationInput {
+export interface DauVaoDienGiaiSau {
   spread: 'triple';
-  cards: [SpreadCardInput, SpreadCardInput, SpreadCardInput];
+  cards: [DauVaoLaBai, DauVaoLaBai, DauVaoLaBai];
   locale: 'vi';
 }
 
-export interface PositionReading {
-  position: SpreadPosition;
-  title: string;
-  interpretation: string;
+export interface DocTheoViTri {
+  position: ViTriTraiBai;
+  tieuDe: string;
+  dienGiai: string;
 }
 
-export interface DeepInterpretationSummary {
-  mainTheme: string;
-  warning: string;
-  actions: [string, string, string];
+export interface TongKetDienGiai {
+  diemSangCotLoi: string;
+  dieuCanTranh: string;
+  viecNenLam: [string, string, string];
 }
 
-export interface DeepInterpretationResult {
+export interface KetQuaDienGiaiSau {
   spread: 'triple';
-  insight: string;
-  challenge: string;
-  summary: DeepInterpretationSummary;
-  positionReadings: [PositionReading, PositionReading, PositionReading];
-  coherenceScore: number;
-  usedFallback: boolean;
+  diemSangCotLoi: string;
+  xungLucNoiTam: string;
+  tongKet: TongKetDienGiai;
+  docTheoViTri: [DocTheoViTri, DocTheoViTri, DocTheoViTri];
+  doNhatQuan: number;
+  daDungPhuongAnDuPhong: boolean;
 }
 
-export interface FormattedInterpretation {
-  insight: string;
-  challenge: string;
-  actions: [string, string, string];
-  narrative: string;
+export interface DienGiaiDaDinhDang {
+  diemSangCotLoi: string;
+  xungLucNoiTam: string;
+  viecNenLam: [string, string, string];
+  vanBanDayDu: string;
 }

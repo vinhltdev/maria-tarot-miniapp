@@ -1,40 +1,29 @@
 # Deep Interpretation Architecture Plan (Phase 1)
 
 Cập nhật: 2026-04-22  
-Repo: `maria-tarot-miniapp`
+Repo: `maria-tarot-miniapp`  
+Scope: Nâng cấp phần triple spread từ template “Tổng quan trải bài” thành engine kiến giải nhiều tầng, bám theo kiến trúc hiện tại (`app/page.tsx`, `lib/tarot/*`).
 
-## Scope
-- Áp dụng cho triple spread (past/present/future).
-- Input là 3 lá đã rút + orientation.
-- Output là kiến giải có cấu trúc để render UI.
+---
 
-## Data Contract
-- Input chuẩn hóa: `SpreadCardInput[]` gồm vị trí, card, orientation, effectiveMeaning.
-- Output chuẩn: `DeepInterpretationResult` gồm:
-  - `insight`
-  - `challenge`
-  - `summary.warning`
-  - `summary.actions` (3 items)
-  - `positionReadings`
-  - `coherenceScore`
+## Spec: Deep Triple-Spread Interpretation
 
-## Narrative Engine Pipeline
-1. Normalize input.
-2. Per-card reading theo từng vị trí.
-3. Cross-card synthesis (core insight + shadow/challenge + warning).
-4. Action layer theo timeframe 24h/7d/30d.
-5. Quality guardrails (anti-generic/anti-contradiction/structural).
+### Scope
+- Chỉ áp dụng cho mode `triple` (Past / Present / Future).
+- Input là 3 lá đã rút trong UI hiện tại (đã có `isReversed` từng lá).
+- Output là bản kiến giải sâu có cấu trúc, dùng được ngay để render UI.
+- Không thay đổi cơ chế draw card hiện tại; chỉ thêm interpretation layer.
 
-## Guardrails chính
-- Không output generic mơ hồ.
-- Không mâu thuẫn nội dung giữa warning và action.
-- Luôn có 3 actions, mỗi action bắt đầu bằng động từ và có timeframe.
+### Requirements
+- Có data contract rõ cho thư viện kiến giải sâu (input/output schema TypeScript).
+- Có pipeline mapping 3 lá -> narrative engine nhiều tầng.
+- Có rules synthesis cụ thể: **chủ đề chính, xung đột nội tâm, cảnh báo, hành động cụ thể**.
+- Có guardrails chất lượng để tránh văn bản chung chung/mâu thuẫn.
+- Có fallback strategy khi thiếu field hoặc source lỗi.
 
-## Fallback Strategy
-- Nếu provider sâu lỗi/thiếu field -> fallback sang rule-based synthesizer.
-- Vẫn trả output đầy đủ schema để UI không vỡ.
-
-## Acceptance
-- Triple spread luôn có output nhiều tầng, không chỉ ghép tên lá.
-- Có đủ block Insight/Cảnh báo/Hành động.
-- Build/lint/typecheck pass.
+### Acceptance Criteria
+- [ ] Triple spread trả về object `DeepInterpretationResult` hợp lệ cho mọi tổ hợp 3 lá.
+- [ ] Output luôn có đủ 4 khối: `mainTheme`, `innerConflict`, `warning`, `actions`.
+- [ ] Nội dung tham chiếu trực tiếp cả 3 vị trí (past/present/future), không bỏ sót lá.
+- [ ] Không có khuyến nghị mâu thuẫn trực tiếp trong cùng kết quả.
+- [ ] Nếu thư viện sâu lỗi/thiếu field, hệ thống fallback an toàn và vẫn render được.

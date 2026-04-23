@@ -1,68 +1,84 @@
-import type { DeepInterpretationInput, DeepInterpretationResult, SpreadCardInput } from './types';
+import type { DauVaoDienGiaiSau, KetQuaDienGiaiSau, DauVaoLaBai } from './types';
 
-const positionTitle: Record<SpreadCardInput['position'], string> = {
-  past: 'Quá khứ – Dấu ấn còn ảnh hưởng',
-  present: 'Hiện tại – Trục năng lượng chính',
-  future: 'Tương lai – Hướng chuyển động kế tiếp',
+const tieuDeViTri: Record<'past' | 'present' | 'future', string> = {
+  past: 'Quá khứ — Dấu ấn còn ảnh hưởng',
+  present: 'Hiện tại — Tâm điểm cần xử lý',
+  future: 'Tương lai — Hướng mở nếu giữ nhịp đúng',
 };
 
-function makePositionInterpretation(item: SpreadCardInput): string {
-  const orientationText = item.orientation === 'reversed' ? 'đang bị nghẽn' : 'đang mở';
-  return `${item.card.name} tại vị trí ${item.position} cho thấy năng lượng ${orientationText}: ${item.effectiveMeaning}`;
+function moTaTheoViTri(la: DauVaoLaBai): string {
+  const trangThai = la.orientation === 'reversed' ? 'đang ở chiều ngược' : 'đang ở chiều xuôi';
+  return `${la.card.name} ${trangThai}, gợi ý rằng ${la.yNghiaHieuLuc.toLowerCase()}.`;
 }
 
-function buildMainTheme(cards: [SpreadCardInput, SpreadCardInput, SpreadCardInput]): string {
-  const [past, present, future] = cards;
-  return `Chủ đề: Bạn đang chuyển từ quán tính của ${past.card.name} sang trọng tâm ${present.card.name}, và quỹ đạo ${future.card.name} sẽ rõ hơn khi bạn hành động có chủ đích.`;
+function taoDiemSangCotLoi(baLa: [DauVaoLaBai, DauVaoLaBai, DauVaoLaBai]): string {
+  const [, hienTai, tuongLai] = baLa;
+  return `Điểm sáng cốt lõi của bạn nằm ở việc chuyển trọng tâm từ ${hienTai.card.name} sang hướng trưởng thành hơn theo tín hiệu của ${tuongLai.card.name}.`;
 }
 
-function buildChallenge(cards: [SpreadCardInput, SpreadCardInput, SpreadCardInput]): string {
-  const [past, present, future] = cards;
-  const pullBack = past.orientation === 'reversed' ? past.card.name : `${past.card.name} (thói quen cũ)`;
-  const moveForward = future.orientation === 'upright' ? future.card.name : `${present.card.name} (điều chỉnh hiện tại)`;
-  return `Bạn đang giằng co giữa lực kéo lùi từ ${pullBack} và nhu cầu tiến tới theo tín hiệu của ${moveForward}.`;
+function taoXungLucNoiTam(baLa: [DauVaoLaBai, DauVaoLaBai, DauVaoLaBai]): string {
+  const [quaKhu, , tuongLai] = baLa;
+  const lucKeoLui = quaKhu.orientation === 'reversed' ? quaKhu.card.name : `${quaKhu.card.name} (thói quen cũ)`;
+  const lucTienLen = tuongLai.orientation === 'upright' ? tuongLai.card.name : `${tuongLai.card.name} (bài học cần đối diện)`;
+
+  return `Bạn đang giằng co giữa lực kéo lùi từ ${lucKeoLui} và nhu cầu tiến lên theo hướng ${lucTienLen}.`;
 }
 
-function buildWarning(cards: [SpreadCardInput, SpreadCardInput, SpreadCardInput]): string {
-  const [past, present, future] = cards;
-  return `Nếu bạn tiếp tục phản ứng theo mô thức của ${past.card.name} mà bỏ qua bài học hiện tại từ ${present.card.name}, rủi ro dễ xảy ra là kết quả tương lai của ${future.card.name} sẽ đến trong trạng thái bị động.`;
+function taoDieuCanTranh(baLa: [DauVaoLaBai, DauVaoLaBai, DauVaoLaBai]): string {
+  const [quaKhu, hienTai, tuongLai] = baLa;
+
+  return `Điều cần tránh là tiếp tục phản ứng theo mô thức của ${quaKhu.card.name} mà bỏ qua bài học hiện tại từ ${hienTai.card.name}; nếu kéo dài, bạn dễ rơi vào thế bị động theo ${tuongLai.card.name}.`;
 }
 
-function buildActions(cards: [SpreadCardInput, SpreadCardInput, SpreadCardInput]): [string, string, string] {
-  const [past, present, future] = cards;
+function taoViecNenLam(baLa: [DauVaoLaBai, DauVaoLaBai, DauVaoLaBai]): [string, string, string] {
+  const [quaKhu, hienTai, tuongLai] = baLa;
+
   return [
-    `[24h] Viết ra 1 hành vi cũ liên quan tới ${past.card.name} mà bạn cần dừng ngay, và chọn 1 thay thế cụ thể trong ngày hôm nay.`,
-    `[7d] Dựa trên ${present.card.name}, thiết lập một nhịp thực hành 15 phút mỗi ngày để củng cố hướng đi hiện tại thay vì phản ứng cảm tính.`,
-    `[30d] Đặt một mốc kết quả theo tinh thần của ${future.card.name}, chia thành 4 bước tuần và tự review vào cuối mỗi tuần.`,
+    `[24h] Viết rõ một thói quen cũ gắn với ${quaKhu.card.name} mà bạn cần dừng ngay, rồi thay bằng một hành động nhỏ làm được trước tối nay.`,
+    `[7 ngày] Dựa theo bài học từ ${hienTai.card.name}, duy trì một khung 15 phút mỗi ngày để giữ nhịp ổn định thay vì phản ứng cảm tính.`,
+    `[30 ngày] Đặt một mốc kết quả theo hướng ${tuongLai.card.name}, chia thành 4 bước theo tuần và tự rà soát vào cuối mỗi tuần.`,
   ];
 }
 
-function computeCoherenceScore(cards: [SpreadCardInput, SpreadCardInput, SpreadCardInput]): number {
-  const reversedCount = cards.filter((c) => c.orientation === 'reversed').length;
-  if (reversedCount === 0) return 90;
-  if (reversedCount === 1) return 82;
-  if (reversedCount === 2) return 76;
+function tinhDoNhatQuan(baLa: [DauVaoLaBai, DauVaoLaBai, DauVaoLaBai]): number {
+  const soLaNguoc = baLa.filter((la) => la.orientation === 'reversed').length;
+
+  if (soLaNguoc === 0) return 90;
+  if (soLaNguoc === 1) return 82;
+  if (soLaNguoc === 2) return 76;
   return 72;
 }
 
-export function synthesizeDeepInterpretation(input: DeepInterpretationInput): DeepInterpretationResult {
-  const cards = input.cards;
+export function tongHopDienGiaiSau(dauVao: DauVaoDienGiaiSau): KetQuaDienGiaiSau {
+  const baLa = dauVao.cards;
 
   return {
     spread: 'triple',
-    insight: buildMainTheme(cards),
-    challenge: buildChallenge(cards),
-    summary: {
-      mainTheme: buildMainTheme(cards),
-      warning: buildWarning(cards),
-      actions: buildActions(cards),
+    diemSangCotLoi: taoDiemSangCotLoi(baLa),
+    xungLucNoiTam: taoXungLucNoiTam(baLa),
+    tongKet: {
+      diemSangCotLoi: taoDiemSangCotLoi(baLa),
+      dieuCanTranh: taoDieuCanTranh(baLa),
+      viecNenLam: taoViecNenLam(baLa),
     },
-    positionReadings: [
-      { position: cards[0].position, title: positionTitle[cards[0].position], interpretation: makePositionInterpretation(cards[0]) },
-      { position: cards[1].position, title: positionTitle[cards[1].position], interpretation: makePositionInterpretation(cards[1]) },
-      { position: cards[2].position, title: positionTitle[cards[2].position], interpretation: makePositionInterpretation(cards[2]) },
+    docTheoViTri: [
+      {
+        position: baLa[0].position,
+        tieuDe: tieuDeViTri[baLa[0].position],
+        dienGiai: moTaTheoViTri(baLa[0]),
+      },
+      {
+        position: baLa[1].position,
+        tieuDe: tieuDeViTri[baLa[1].position],
+        dienGiai: moTaTheoViTri(baLa[1]),
+      },
+      {
+        position: baLa[2].position,
+        tieuDe: tieuDeViTri[baLa[2].position],
+        dienGiai: moTaTheoViTri(baLa[2]),
+      },
     ],
-    coherenceScore: computeCoherenceScore(cards),
-    usedFallback: false,
+    doNhatQuan: tinhDoNhatQuan(baLa),
+    daDungPhuongAnDuPhong: false,
   };
 }

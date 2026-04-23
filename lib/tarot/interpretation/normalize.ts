@@ -1,27 +1,19 @@
-import type { SpreadPosition, SpreadCardInput } from './types';
+import type { DauVaoLaBai } from './types';
 import type { TarotCard } from '@/lib/tarot/types';
 
-interface RawDrawnCard {
-  card: TarotCard;
-  isReversed: boolean;
-}
+const viTriTheoChiSo: Array<'past' | 'present' | 'future'> = ['past', 'present', 'future'];
 
-const positions: SpreadPosition[] = ['past', 'present', 'future'];
-
-export function normalizeTripleSpreadInput(drawnCards: RawDrawnCard[]): [SpreadCardInput, SpreadCardInput, SpreadCardInput] {
+export function normalizeTripleSpreadInput(
+  drawnCards: Array<{ card: TarotCard; isReversed: boolean }>,
+): [DauVaoLaBai, DauVaoLaBai, DauVaoLaBai] {
   if (drawnCards.length !== 3) {
-    throw new Error('normalizeTripleSpreadInput requires exactly 3 cards');
+    throw new Error('Triple spread yêu cầu đúng 3 lá bài.');
   }
 
-  return positions.map((position, index) => {
-    const item = drawnCards[index];
-    const orientation = item.isReversed ? 'reversed' : 'upright';
-
-    return {
-      position,
-      card: item.card,
-      orientation,
-      effectiveMeaning: item.isReversed ? item.card.meaning.reversed : item.card.meaning.upright,
-    };
-  }) as [SpreadCardInput, SpreadCardInput, SpreadCardInput];
+  return drawnCards.map((item, index) => ({
+    position: viTriTheoChiSo[index],
+    card: item.card,
+    orientation: item.isReversed ? 'reversed' : 'upright',
+    yNghiaHieuLuc: item.isReversed ? item.card.meaning.reversed : item.card.meaning.upright,
+  })) as [DauVaoLaBai, DauVaoLaBai, DauVaoLaBai];
 }

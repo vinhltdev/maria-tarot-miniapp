@@ -1,25 +1,19 @@
-import type { DeepInterpretationResult, FormattedInterpretation, InterpretationDepth } from './types';
+import type { KetQuaDienGiaiSau, DienGiaiDaDinhDang, MucDoDienGiai } from './types';
 
-function buildNarrative(result: DeepInterpretationResult, depth: InterpretationDepth): string {
-  if (depth === 'short') return `${result.insight} ${result.summary.warning}`;
-  if (depth === 'medium') return `${result.insight}\n\n${result.challenge}\n\n${result.summary.warning}`;
+function taoVanBanDayDu(ketQua: KetQuaDienGiaiSau, mucDo: MucDoDienGiai): string {
+  const nhan = mucDo === 'short' ? 'Tóm tắt nhanh' : mucDo === 'medium' ? 'Tóm tắt trọng tâm' : 'Kiến giải chi tiết';
 
-  return [
-    result.insight,
-    result.challenge,
-    result.summary.warning,
-    `Hành động đề xuất: ${result.summary.actions.join(' ')}`,
-  ].join('\n\n');
+  return `${nhan}: ${ketQua.diemSangCotLoi} ${ketQua.xungLucNoiTam} ${ketQua.tongKet.dieuCanTranh}`;
 }
 
-export function formatInterpretation(
-  result: DeepInterpretationResult,
-  depth: InterpretationDepth = 'deep',
-): FormattedInterpretation {
+export function dinhDangDienGiai(
+  ketQua: KetQuaDienGiaiSau,
+  mucDo: MucDoDienGiai = 'deep',
+): DienGiaiDaDinhDang {
   return {
-    insight: result.insight,
-    challenge: result.challenge,
-    actions: result.summary.actions,
-    narrative: buildNarrative(result, depth),
+    diemSangCotLoi: ketQua.diemSangCotLoi,
+    xungLucNoiTam: ketQua.xungLucNoiTam,
+    viecNenLam: ketQua.tongKet.viecNenLam,
+    vanBanDayDu: taoVanBanDayDu(ketQua, mucDo),
   };
 }
